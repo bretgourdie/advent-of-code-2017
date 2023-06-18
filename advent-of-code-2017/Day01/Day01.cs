@@ -12,7 +12,7 @@ namespace advent_of_code_2017.Day01
 
         protected override long part1InputExpected => 1175;
 
-        protected override long part2ExampleExpected => 4;
+        protected override long part2ExampleExpected => 0;
 
         protected override long part2InputExpected => 1166;
 
