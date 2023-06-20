@@ -6,18 +6,18 @@
 
         protected override long part1InputExpected => 419;
 
-        protected override long part2ExampleExpected => throw new NotImplementedException();
+        protected override long part2ExampleExpected => 1890;
 
-        protected override long part2InputExpected => throw new NotImplementedException();
+        protected override long part2InputExpected => 295229;
 
         protected override long part1Work(string[] input)
         {
-            return new Grid().Generate(int.Parse(input.First()), x => x + 1);
+            return new Grid().Generate(int.Parse(input.First()), new ManhattanDistance());
         }
 
         protected override long part2Work(string[] input)
         {
-            throw new NotImplementedException();
+            return new Grid().Generate(int.Parse(input.First()), new LargerValue());
         }
     }
 }

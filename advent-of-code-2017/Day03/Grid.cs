@@ -2,11 +2,15 @@
 {
     internal class Grid
     {
-        public long Generate(int target, Func<int, int> getNext)
+        public long Generate(
+            int target,
+            ISolvingStrategy solvingStrategy)
         {
-            IDictionary<int, Point2D> grid = new Dictionary<int, Point2D>()
+            Point2D currentPoint = new Point2D(0, 0);
+
+            IDictionary<Point2D, int> grid = new Dictionary<Point2D, int>()
             {
-                {1, new Point2D(0, 0) }
+                {currentPoint, 1}
             };
 
             int x = 0;
@@ -15,14 +19,14 @@
             int xDirection = 1;
             int yDirection = 0;
 
-            int current = 1;
+            int currentNumber = 1;
             int moves = 0;
 
             int remainingInDirection = 1;
 
-            while (current != target)
+            while (!solvingStrategy.IsFinished(currentNumber, target))
             {
-                current = getNext(current);
+                currentNumber = solvingStrategy.AddToCurrent(currentPoint, grid);
 
                 var newXDirection = getXDirection(xDirection, yDirection, remainingInDirection);
                 var newYDirection = getYDirection(xDirection, yDirection, remainingInDirection);
@@ -34,13 +38,12 @@
                 x += 1 * xDirection;
                 y += 1 * yDirection;
 
-                var point = new Point2D(x, y);
-                grid[current] = point;
+                currentPoint = new Point2D(x, y);
+                grid[currentPoint] = currentNumber;
                 moves += 1;
             }
 
-            return Math.Abs(grid[current].X)
-                + Math.Abs(grid[current].Y);
+            return solvingStrategy.GetValue(currentPoint, grid);
         }
 
         private int getRemainingInDirection(
