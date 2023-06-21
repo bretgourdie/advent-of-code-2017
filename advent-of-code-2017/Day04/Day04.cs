@@ -25,7 +25,7 @@ internal class Day04 : AdventSolution
             {
                 var transformed = phraseTransform(phrase);
 
-                valid &= set.Contains(transformed);
+                valid &= !set.Contains(transformed);
 
                 if (!set.Contains(transformed))
                 {
