@@ -6,7 +6,7 @@
 
         protected override long part1InputExpected => 419;
 
-        protected override long part2ExampleExpected => 1890;
+        protected override long part2ExampleExpected => 1968;
 
         protected override long part2InputExpected => 295229;
 
