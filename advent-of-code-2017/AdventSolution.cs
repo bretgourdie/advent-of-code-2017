@@ -5,14 +5,6 @@ namespace advent_of_code_2017;
 [TestFixture]
 public abstract class AdventSolution
 {
-    private long _expected;
-    private long _actual;
-
-    private long _exampleExpected;
-    private long _inputExpected;
-
-    private bool _wasExpectedMethodCalled;
-
     [SetUp]
     public void Setup()
     {
@@ -65,15 +57,6 @@ public abstract class AdventSolution
 
     }
 
-    private void expected(
-        long exampleExpected,
-        long inputExpected)
-    {
-        _exampleExpected = exampleExpected;
-        _inputExpected = inputExpected;
-        _wasExpectedMethodCalled = true;
-    }
-
     protected abstract long part1ExampleExpected { get; }
     protected abstract long part1InputExpected { get; }
 
@@ -108,9 +91,6 @@ public abstract class AdventSolution
         long expected,
         long actual)
     {
-        _expected = expected;
-        _actual = actual;
-
         Assert.That(expected == actual, $"Expected {expected}; actual {actual}");
     }
 
