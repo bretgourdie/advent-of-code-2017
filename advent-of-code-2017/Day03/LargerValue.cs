@@ -6,18 +6,15 @@
         {
             var sum = 0;
 
-            for (int x = point.X - 1; x < point.X + 1; x++)
+            for (int x = placingPoint.X - 1; x <= placingPoint.X + 1; x++)
             {
-                for (int y = point.Y - 1; y < point.Y + 1; y++)
+                for (int y = placingPoint.Y - 1; y <= placingPoint.Y + 1; y++)
                 {
-                    if (point.X != x || point.Y != y)
-                    {
-                        var checkPoint = new Point2D(x, y);
+                    var checkPoint = new Point2D(x, y);
 
-                        if (grid.ContainsKey(checkPoint))
-                        {
-                            sum += grid[checkPoint];
-                        }
+                    if (grid.ContainsKey(checkPoint))
+                    {
+                        sum += grid[checkPoint];
                     }
                 }
             }
