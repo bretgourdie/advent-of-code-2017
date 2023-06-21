@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace advent_of_code_2017.Day04;
+﻿namespace advent_of_code_2017.Day04;
 
 internal class Day04 : AdventSolution
 {
