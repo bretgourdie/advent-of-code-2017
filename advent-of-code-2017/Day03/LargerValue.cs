@@ -2,7 +2,7 @@
 {
     internal class LargerValue : ISolvingStrategy
     {
-        public int AddToCurrent(Point2D point, IDictionary<Point2D, int> grid)
+        public int AddToCurrent(Point2D previousPoint, Point2D placingPoint, IDictionary<Point2D, int> grid)
         {
             var sum = 0;
 

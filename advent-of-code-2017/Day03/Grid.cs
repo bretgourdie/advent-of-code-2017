@@ -7,6 +7,7 @@
             ISolvingStrategy solvingStrategy)
         {
             Point2D currentPoint = new Point2D(0, 0);
+            Point2D previousPoint;
 
             IDictionary<Point2D, int> grid = new Dictionary<Point2D, int>()
             {
@@ -26,8 +27,6 @@
 
             while (!solvingStrategy.IsFinished(currentNumber, target))
             {
-                currentNumber = solvingStrategy.AddToCurrent(currentPoint, grid);
-
                 var newXDirection = getXDirection(xDirection, yDirection, remainingInDirection);
                 var newYDirection = getYDirection(xDirection, yDirection, remainingInDirection);
                 remainingInDirection = getRemainingInDirection(remainingInDirection, moves);
@@ -38,7 +37,10 @@
                 x += 1 * xDirection;
                 y += 1 * yDirection;
 
+                previousPoint = currentPoint;
                 currentPoint = new Point2D(x, y);
+                currentNumber = solvingStrategy.AddToCurrent(previousPoint, currentPoint, grid);
+
                 grid[currentPoint] = currentNumber;
                 moves += 1;
             }
