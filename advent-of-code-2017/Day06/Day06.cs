@@ -30,18 +30,12 @@ internal class Day06 : AdventSolution
             var blocksToSpread = banks[firstIndexOfMaxBlocks];
             banks[firstIndexOfMaxBlocks] = 0;
 
-            for (int ii = 1; ii < banks.Length; ii++)
+            for (int ii = 0; ii < blocksToSpread; ii++)
             {
-                var currentIndex = (firstIndexOfMaxBlocks + ii) % banks.Length;
+                var currentIndex = (firstIndexOfMaxBlocks + ii + 1) % banks.Length;
 
-
-                var blocksForBank = (int)(blocksToSpread / (banks.Length - 1));
-
-                banks[currentIndex] += blocksForBank;
+                banks[currentIndex] += 1;
             }
-
-            var remaining = blocksToSpread % (banks.Length - 1);
-            banks[firstIndexOfMaxBlocks] += remaining;
         }
 
         return (long)configurations.Count;
