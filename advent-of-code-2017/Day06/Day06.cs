@@ -12,7 +12,7 @@ internal class Day06 : AdventSolution
     private string getBankString(int[] banks) =>
         String.Join(' ', banks);
 
-    private long work(string[] input, IReallocationTerminationStrategy strategy)
+    private long work(string[] input, ITerminateStrategy strategy)
     {
         var banks = input.Single().Split('\t').Select(x => int.Parse(x)).ToArray();
 

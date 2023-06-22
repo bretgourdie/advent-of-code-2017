@@ -1,5 +1,5 @@
 ﻿namespace advent_of_code_2017.Day06;
-internal class CycleLengthDetection : IReallocationTerminationStrategy
+internal class CycleLengthDetection : ITerminateStrategy
 {
     private ISet<string> configurations = new HashSet<string>();
     private ISet<string> infiniteLoopConfigurations = new HashSet<string>();

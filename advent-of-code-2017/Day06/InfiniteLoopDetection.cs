@@ -1,5 +1,5 @@
 ﻿namespace advent_of_code_2017.Day06;
-internal class InfiniteLoopDetection : IReallocationTerminationStrategy
+internal class InfiniteLoopDetection : ITerminateStrategy
 {
     private readonly ISet<string> configurations = new HashSet<string>();
 
