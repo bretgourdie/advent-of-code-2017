@@ -12,15 +12,13 @@ internal class Day06 : AdventSolution
     private string getBankString(int[] banks) =>
         String.Join(' ', banks);
 
-    protected override long part1Work(string[] input)
+    private long work(string[] input, IReallocationTerminationStrategy strategy)
     {
         var banks = input.Single().Split('\t').Select(x => int.Parse(x)).ToArray();
 
-        var configurations = new HashSet<string>();
-
-        while (!configurations.Contains(getBankString(banks)))
+        while (!strategy.IsDone(getBankString(banks)))
         {
-            configurations.Add(getBankString(banks));
+            strategy.Add(getBankString(banks));
 
             var firstIndexOfMaxBlocks = banks
                 .Select( (blocks, index) => (blocks, index) )
@@ -38,11 +36,12 @@ internal class Day06 : AdventSolution
             }
         }
 
-        return configurations.Count;
+        return strategy.GetSteps();
     }
 
-    protected override long part2Work(string[] input)
-    {
-        throw new NotImplementedException();
-    }
+    protected override long part1Work(string[] input) =>
+        work(input, new InfiniteLoopDetection());
+
+    protected override long part2Work(string[] input) =>
+        work(input, new CycleLengthDetection());
 }
