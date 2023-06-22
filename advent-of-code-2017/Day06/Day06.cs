@@ -38,7 +38,7 @@ internal class Day06 : AdventSolution
             }
         }
 
-        return (long)configurations.Count;
+        return configurations.Count;
     }
 
     protected override long part2Work(string[] input)
