@@ -14,8 +14,6 @@ internal class Day06 : AdventSolution
 
     protected override long part1Work(string[] input)
     {
-        long stepsToInfiniteLoop = 0;
-
         var banks = input.Single().Split('\t').Select(x => int.Parse(x)).ToArray();
 
         var configurations = new HashSet<string>();
@@ -44,11 +42,9 @@ internal class Day06 : AdventSolution
 
             var remaining = blocksToSpread % (banks.Length - 1);
             banks[firstIndexOfMaxBlocks] += remaining;
-
-            stepsToInfiniteLoop += 1;
         }
 
-        return stepsToInfiniteLoop;
+        return (long)configurations.Count;
     }
 
     protected override long part2Work(string[] input)
