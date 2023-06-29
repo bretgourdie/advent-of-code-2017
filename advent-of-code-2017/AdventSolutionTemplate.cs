@@ -2,7 +2,6 @@ using NUnit.Framework;
 
 namespace advent_of_code_2017;
 
-[TestFixture]
 public abstract class AdventSolutionTemplate<TPart1, TPart2>
 {
     private const string example = "example";
