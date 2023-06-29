@@ -1,4 +1,6 @@
-﻿namespace advent_of_code_2017.Day07;
+﻿using System.Xml.XPath;
+
+namespace advent_of_code_2017.Day07;
 internal class Day07 : AdventSolutionTemplate<string, long>
 {
     protected override string part1ExampleExpected => "tknk";
@@ -49,21 +51,28 @@ internal class Day07 : AdventSolutionTemplate<string, long>
 
         var balanceNeeded = determineBalancing(root, nodeLookup);
 
-        return balanceNeeded;
+        return balanceNeeded.Weight;
     }
 
-    private long determineBalancing(
+    private BalancingResult determineBalancing(
         Node root,
         IDictionary<string, Node> nodeLookup)
     {
         var nodeToChildrenWeight = new Dictionary<string, long>();
         foreach (var child in root.Children)
         {
-            var weight = determineBalancing(nodeLookup[child], nodeLookup);
-            nodeToChildrenWeight[child] = weight;
+            var result = determineBalancing(nodeLookup[child], nodeLookup);
+
+            if (result.Type == BalancingResult.ResultType.ChildWeight)
+            {
+                nodeToChildrenWeight[child] = result.Weight;
+            }
+            else
+            {
+                return result;
+            }
         }
 
-        long weightToBe = -1;
         if (nodeToChildrenWeight.Values.Distinct().Count() > 1)
         {
             var oddOneOut = nodeToChildrenWeight
@@ -75,13 +84,37 @@ internal class Day07 : AdventSolutionTemplate<string, long>
                 .Distinct()
                 .Single();
 
-            return nodeLookup[oddOneOut.Key].Weight
+            var correctingWeight =
+                nodeLookup[oddOneOut.Key].Weight
                 + (otherWeight - oddOneOut.Value);
+
+            return new BalancingResult(correctingWeight, BalancingResult.ResultType.BalanceCorrection);
         }
 
         else
         {
-            return nodeToChildrenWeight.Values.Sum() + root.Weight;
+            var childrenWeight = nodeToChildrenWeight.Values.Sum() + root.Weight;
+            return new BalancingResult(childrenWeight, BalancingResult.ResultType.ChildWeight);
+        }
+    }
+
+    private struct BalancingResult
+    {
+        public readonly long Weight;
+        public readonly ResultType Type;
+
+        public BalancingResult(
+            long weight,
+            ResultType resultType)
+        {
+            Weight = weight;
+            Type = resultType;
+        }
+
+        public enum ResultType
+        {
+            ChildWeight,
+            BalanceCorrection
         }
     }
 }
