@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace advent_of_code_2017.Day09;
+﻿namespace advent_of_code_2017.Day09;
 internal class Day09 : AdventSolution
 {
     const char groupStart = '{';
