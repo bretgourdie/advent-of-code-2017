@@ -66,7 +66,10 @@ internal class Instruction
     {
         var dt = new DataTable();
         var expression = value.ToString() + comparisonOperator + comparisonImmediate.ToString();
-        bool answer = (bool)dt.Compute(expression, String.Empty);
+        var expressionEqualsSanitized = expression
+            .Replace("==", "=")
+            .Replace("!=", "<>");
+        bool answer = (bool)dt.Compute(expressionEqualsSanitized, String.Empty);
         return answer;
     }
 
