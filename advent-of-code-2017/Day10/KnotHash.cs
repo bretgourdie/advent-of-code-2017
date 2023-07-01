@@ -1,49 +1,113 @@
-﻿namespace advent_of_code_2017.Day10;
+﻿using System.Text;
+
+namespace advent_of_code_2017.Day10;
 internal class KnotHash
 {
-    public long Hash(string line, int numbersLength)
-    {
-        return
-            Hash(
-                numbersLength,
-                line
-                    .Split(",", StringSplitOptions.RemoveEmptyEntries)
-                    .Select(x => int.Parse(x))
-                    .ToList()
-            );
+    private readonly int[] standardLengthSuffixValues =
+        new[] { 17, 31, 73, 47, 23 };
 
+    private const int sparseHashRounds = 64;
+    private const int sparseHashLength = 256;
+    private const int denseHashLength = 16;
+
+    public long PracticeHash(int numbersLength, string line)
+    {
+        var split = line.Split(",", StringSplitOptions.RemoveEmptyEntries);
+        var lengths = split.Select(x => int.Parse(x)).ToList();
+
+        var result = getSparseHash(numbersLength, lengths, 1);
+
+        return result[0] * result[1];
     }
 
-    public long Hash(IList<int> lengths) => Hash(256, lengths);
+    public string Hash(string line)
+    {
+        var lengths = getLengths(line);
 
-    public long Hash(int numbersLength, IList<int> lengths)
+        var sparseHash = getSparseHash(sparseHashLength, lengths, sparseHashRounds);
+
+        var denseHash = getDenseHash(sparseHash);
+
+        var hexString = getHexString(denseHash);
+
+        return hexString;
+    }
+
+    private string getHexString(int[] denseHash)
+    {
+        var hexBuilder = new StringBuilder();
+
+        foreach (var number in denseHash)
+        {
+            var hex = number.ToString("x2");
+            hexBuilder.Append(hex);
+        }
+
+        return hexBuilder.ToString();
+    }
+
+    private int[] getDenseHash(int[] sparseHash)
+    {
+        int[] denseHash = new int[denseHashLength];
+
+        for (int denseHashChunkStart = 0; denseHashChunkStart < denseHashLength; denseHashChunkStart += 1)
+        {
+            var result = sparseHash[denseHashChunkStart * denseHashLength];
+
+            for (int ii = 1; ii < denseHashLength; ii++)
+            {
+                result ^= sparseHash[denseHashChunkStart * denseHashLength + ii];
+            }
+
+            denseHash[denseHashChunkStart] = result;
+        }
+
+        return denseHash;
+    }
+
+    private IList<int> getLengths(string line)
+    {
+        var lengths = line.Select(x => (int)x).ToList();
+        lengths.AddRange(standardLengthSuffixValues);
+        return lengths;
+    }
+
+    private int[] getSparseHash(
+        int numbersLength,
+        IList<int> lengths,
+        int numberOfRounds)
     {
         var numbers = startingNumbers(numbersLength);
         var currentIndex = 0;
+        var skipSize = 0;
 
-        for (int skipSize = 0; skipSize < lengths.Count; skipSize++)
+        for (int round = 0; round < numberOfRounds; round++)
         {
-            var lengthSize = lengths[skipSize];
-
-            var list = new List<int>();
-            for (int ii = 0; ii < lengthSize; ii++)
+            for (int lengthIteration = 0; lengthIteration < lengths.Count; lengthIteration++)
             {
-                var sliceIndex = (currentIndex + ii) % numbers.Length;
-                list.Add(numbers[sliceIndex]);
+                var lengthSize = lengths[lengthIteration];
+
+                var list = new List<int>();
+                for (int ii = 0; ii < lengthSize; ii++)
+                {
+                    var sliceIndex = (currentIndex + ii) % numbers.Length;
+                    list.Add(numbers[sliceIndex]);
+                }
+
+                list.Reverse();
+
+                for (int ii = 0; ii < lengthSize; ii++)
+                {
+                    var putIndex = (currentIndex + ii) % numbers.Length;
+                    numbers[putIndex] = list[ii];
+                }
+
+                currentIndex += lengthSize + skipSize;
+                skipSize += 1;
             }
-
-            list.Reverse();
-
-            for (int ii = 0; ii < lengthSize; ii++)
-            {
-                var putIndex = (currentIndex + ii) % numbers.Length;
-                numbers[putIndex] = list[ii];
-            }
-
-            currentIndex += lengthSize + skipSize;
         }
 
-        return numbers[0] * numbers[1];
+        return numbers;
     }
 
     private int[] startingNumbers(int length) => startingNumberYields(length).ToArray();
