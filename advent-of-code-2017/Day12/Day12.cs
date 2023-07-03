@@ -7,54 +7,47 @@ internal class Day12 : AdventSolution
 
     protected override long part1InputExpected => 283;
 
-    protected override long part2ExampleExpected => throw new NotImplementedException();
+    protected override long part2ExampleExpected => 2;
 
-    protected override long part2InputExpected => throw new NotImplementedException();
+    protected override long part2InputExpected => 195;
 
-    protected override long part1Work(string[] input)
+    private IList<IList<int>> work(string[] input)
     {
         var paths = getPaths(input);
-        const int target = 0;
-        int numbersThatCanReachTarget = 0;
+        var pathGroups = new List<IList<int>>();
 
         foreach (var path in paths.Keys)
         {
-            if (canReach(paths, path, target, new HashSet<int>()))
+            if (!pathGroups.Any(x => x.Contains(path)))
             {
-                numbersThatCanReachTarget += 1;
+                pathGroups.Add(getGroup(
+                    paths,
+                    path,
+                    new HashSet<int>()));
             }
         }
 
-        return numbersThatCanReachTarget;
+        return pathGroups;
     }
 
-    private bool canReach(
+    private IList<int> getGroup(
         IDictionary<int, IList<int>> paths,
         int path,
-        int target,
         ISet<int> visitedPaths)
     {
-        var options = paths[path];
-
-        if (path == target || options.Contains(target))
-        {
-            return true;
-        }
-
         visitedPaths.Add(path);
+
+        var options = paths[path];
 
         foreach (var option in options)
         {
             if (!visitedPaths.Contains(option))
             {
-                if (canReach(paths, option, target, visitedPaths))
-                {
-                    return true;
-                }
+                getGroup(paths, option, visitedPaths);
             }
         }
 
-        return false;
+        return visitedPaths.ToList();
     }
 
     private IDictionary<int, IList<int>> getPaths(IList<string> input)
@@ -75,8 +68,16 @@ internal class Day12 : AdventSolution
         return paths;
     }
 
+    protected override long part1Work(string[] input)
+    {
+        return work(input)
+            .Where(x => x.Contains(0))
+            .SelectMany(x => x)
+            .Count();
+    }
+
     protected override long part2Work(string[] input)
     {
-        throw new NotImplementedException();
+        return work(input).Count();
     }
 }
