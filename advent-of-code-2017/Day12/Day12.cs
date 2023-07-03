@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace advent_of_code_2017.Day12;
+﻿namespace advent_of_code_2017.Day12;
 internal class Day12 : AdventSolution
 {
     protected override long part1ExampleExpected => 6;
