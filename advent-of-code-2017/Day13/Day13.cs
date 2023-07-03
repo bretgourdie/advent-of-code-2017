@@ -5,12 +5,14 @@ internal class Day13 : AdventSolution
 
     protected override long part1InputExpected => 1624;
 
-    protected override long part2ExampleExpected => throw new NotImplementedException();
+    protected override long part2ExampleExpected => 10;
 
-    protected override long part2InputExpected => throw new NotImplementedException();
+    protected override long part2InputExpected => 3923436;
 
-    protected override long part1Work(string[] input)
+
+    private long work(string[] input, int delay, out bool wasCaught)
     {
+        wasCaught = false;
         var scanners = new Dictionary<int, Scanner>();
 
         foreach (var line in input)
@@ -21,6 +23,11 @@ internal class Day13 : AdventSolution
             scanners.Add(depth, new Scanner(range));
         }
 
+        for (int ii = 0; ii < delay; ii++)
+        {
+            updateScanners(scanners);
+        }
+
         int severity = 0;
         var maxDepth = scanners.Keys.Max();
 
@@ -28,6 +35,7 @@ internal class Day13 : AdventSolution
         {
             if (scanners.ContainsKey(depth) && scanners[depth].Detected)
             {
+                wasCaught = true;
                 severity += depth * scanners[depth].Range;
             }
 
@@ -45,8 +53,25 @@ internal class Day13 : AdventSolution
         }
     }
 
+    protected override long part1Work(string[] input) => work(input, 0, out bool wasCaught);
+
     protected override long part2Work(string[] input)
     {
-        throw new NotImplementedException();
+        int delay = 0;
+        bool wasCaught = true;
+
+        while (wasCaught)
+        {
+            long severity = work(input, delay, out wasCaught);
+
+            if (!wasCaught)
+            {
+                return delay;
+            }
+
+            delay += 1;
+        }
+
+        return -1;
     }
 }
