@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace advent_of_code_2017.Day10;
+namespace advent_of_code_2017.Common;
 internal class KnotHash
 {
     private readonly int[] standardLengthSuffixValues =

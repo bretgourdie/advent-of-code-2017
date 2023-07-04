@@ -1,4 +1,6 @@
-﻿namespace advent_of_code_2017.Day10;
+﻿using advent_of_code_2017.Common;
+
+namespace advent_of_code_2017.Day10;
 internal class Day10 : AdventSolutionTemplate<long, string>
 {
     protected override long part1ExampleExpected => 12;
