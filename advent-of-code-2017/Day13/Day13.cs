@@ -11,7 +11,7 @@ internal class Day13 : AdventSolution
 
 
     private long work(
-        IDictionary<int, Scanner> scanners,
+        IDictionary<int, int> scanners,
         int delay,
         out bool wasCaught)
     {
@@ -23,29 +23,36 @@ internal class Day13 : AdventSolution
 
         for (int depth = 0; depth <= maxDepth; depth++)
         {
-            if (scanners.ContainsKey(depth) && scanners[depth].WillBeCaught(depth, delay))
+            int time = depth + delay;
+            if (scanners.ContainsKey(depth) && willBeCaught(scanners[depth], time))
             {
                 wasCaught = true;
-                severity += depth * scanners[depth].Range;
+                severity += depth * scanners[depth];
             }
         }
 
         return severity;
     }
     
-    private IDictionary<int, Scanner> getScanners(string[] input)
+    private IDictionary<int, int> getScanners(string[] input)
     {
-        var scanners = new Dictionary<int, Scanner>();
+        var scanners = new Dictionary<int, int>();
 
         foreach (var line in input)
         {
             var split = line.Split(": ");
             var depth = int.Parse(split[0]);
             var range = int.Parse(split[1]);
-            scanners.Add(depth, new Scanner(range));
+            scanners.Add(depth, range);
         }
 
         return scanners;
+    }
+
+    private bool willBeCaught(int range, int time)
+    {
+        int cycle = (range * 2 - 2);
+        return time % cycle == 0;
     }
 
     protected override long part1Work(string[] input) =>
