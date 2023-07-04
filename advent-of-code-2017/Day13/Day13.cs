@@ -23,34 +23,19 @@ internal class Day13 : AdventSolution
             scanners.Add(depth, new Scanner(range));
         }
 
-        for (int ii = 0; ii < delay; ii++)
-        {
-            updateScanners(scanners);
-        }
-
         int severity = 0;
         var maxDepth = scanners.Keys.Max();
 
         for (int depth = 0; depth <= maxDepth; depth++)
         {
-            if (scanners.ContainsKey(depth) && scanners[depth].Detected)
+            if (scanners.ContainsKey(depth) && scanners[depth].WillBeCaught(depth, delay))
             {
                 wasCaught = true;
                 severity += depth * scanners[depth].Range;
             }
-
-            updateScanners(scanners);
         }
 
         return severity;
-    }
-
-    private void updateScanners(IDictionary<int, Scanner> scanners)
-    {
-        foreach (var scanner in scanners.Keys)
-        {
-            scanners[scanner].Update();
-        }
     }
 
     protected override long part1Work(string[] input) => work(input, 0, out bool wasCaught);
