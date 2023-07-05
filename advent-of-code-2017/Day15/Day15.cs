@@ -11,8 +11,6 @@ internal class Day15 : AdventSolution
 
     private long work(string[] input, bool useConditionals)
     {
-        var lower16Bits = 0b1111_1111_1111_1111;
-
         var a = new Generator(input.First(), useConditionals);
         var b = new Generator(input.Skip(1).First(), useConditionals);
 
@@ -23,7 +21,7 @@ internal class Day15 : AdventSolution
             var aValue = a.Generate();
             var bValue = b.Generate();
 
-            if ((aValue & lower16Bits) == (bValue & lower16Bits))
+            if (getLower16Bits(aValue) == getLower16Bits(bValue))
             {
                 matches += 1;
             }
@@ -31,6 +29,9 @@ internal class Day15 : AdventSolution
 
         return matches;
     }
+
+    private long getLower16Bits(long value) =>
+        value & 0b1111_1111_1111_1111;
 
     private long numberOfPairsToCheck(bool useConditionals) =>
         useConditionals
