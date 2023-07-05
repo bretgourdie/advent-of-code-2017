@@ -8,12 +8,23 @@ internal class Generator
             {"B", 48271}
         };
 
+    private static readonly IDictionary<string, Func<long, bool>> GeneratorToConditions =
+        new Dictionary<string, Func<long, bool>>()
+        {
+            {"A", x => x % 4 == 0 },
+            {"B", x => x % 8 == 0 }
+        };
+
     private readonly long factor;
+    private readonly bool useCondition;
     private const long divisor = 2147483647;
+    private Func<long, bool> condition;
 
     private long lastValue;
 
-    public Generator(string line)
+    public Generator(
+        string line,
+        bool useCondition)
     {
         var split = line.Split(" starts with ");
         var generator = split[0].Replace("Generator ", String.Empty);
@@ -21,15 +32,23 @@ internal class Generator
 
         var startValue = long.Parse(split[1]);
         lastValue = startValue;
+
+        this.useCondition = useCondition;
+        this.condition = Generator.GeneratorToConditions[generator];
     }
 
     public long Generate()
     {
-        var next = lastValue * factor;
+        long remainder;
 
-        var remainder = next % divisor;
+        do
+        {
+            var next = lastValue * factor;
 
-        lastValue = remainder;
+            remainder = next % divisor;
+
+            lastValue = remainder;
+        } while (this.useCondition && !this.condition(remainder));
 
         return remainder;
     }

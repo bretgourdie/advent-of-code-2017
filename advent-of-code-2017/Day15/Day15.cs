@@ -5,20 +5,20 @@ internal class Day15 : AdventSolution
 
     protected override long part1InputExpected => 594;
 
-    protected override long part2ExampleExpected => throw new NotImplementedException();
+    protected override long part2ExampleExpected => 309;
 
-    protected override long part2InputExpected => throw new NotImplementedException();
+    protected override long part2InputExpected => 328;
 
-    protected override long part1Work(string[] input)
+    private long work(string[] input, bool useConditionals)
     {
         var lower16Bits = 0b1111_1111_1111_1111;
 
-        var a = new Generator(input.First());
-        var b = new Generator(input.Skip(1).First());
+        var a = new Generator(input.First(), useConditionals);
+        var b = new Generator(input.Skip(1).First(), useConditionals);
 
         long matches = 0;
 
-        for (int ii = 0; ii < 40_000_000; ii++)
+        for (int ii = 0; ii < numberOfPairsToCheck(useConditionals); ii++)
         {
             var aValue = a.Generate();
             var bValue = b.Generate();
@@ -32,8 +32,14 @@ internal class Day15 : AdventSolution
         return matches;
     }
 
-    protected override long part2Work(string[] input)
-    {
-        throw new NotImplementedException();
-    }
+    private long numberOfPairsToCheck(bool useConditionals) =>
+        useConditionals
+            ? 5_000_000
+            : 40_000_000;
+
+    protected override long part1Work(string[] input) =>
+        work(input, useConditionals: false);
+
+    protected override long part2Work(string[] input) =>
+        work(input, useConditionals: true);
 }
