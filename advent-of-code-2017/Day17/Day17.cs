@@ -10,11 +10,11 @@ internal class Day17 : AdventSolution
     protected override long part2InputExpected => 41797835;
 
 
-    protected long work(
-        string[] input,
-        long insertions,
-        long target)
+    protected override long part1Work(
+        string[] input)
     {
+        const long insertions = 2017;
+        const long target = 2017;
         var stepForward = int.Parse(input.First());
 
         var list = new LinkedList<long>();
@@ -51,7 +51,34 @@ internal class Day17 : AdventSolution
     private static LinkedListNode<T> getNext<T>(LinkedListNode<T> node, LinkedList<T> list) =>
         node.Next ?? list.First!;
 
-    protected override long part1Work(string[] input) => work(input, 2017, 2017);
+    protected override long part2Work(string[] input)
+    {
+        const long insertions = 50_000_000;
+        const long target = 0;
 
-    protected override long part2Work(string[] input) => work(input, 50_000_000, 0);
+        var zeroPosition = 0;
+        var nextNumber = 0;
+        var currentPosition = 0;
+
+        var stepSize = int.Parse(input.First());
+
+        for (int ii = 1; ii <= insertions; ii++)
+        {
+            currentPosition = (currentPosition + stepSize) % ii;
+
+            if (currentPosition == zeroPosition)
+            {
+                nextNumber = ii;
+            }
+
+            else if (currentPosition < zeroPosition)
+            {
+                zeroPosition += 1;
+            }
+
+            currentPosition = (currentPosition + 1) % (ii + 1);
+        }
+
+        return nextNumber;
+    }
 }
