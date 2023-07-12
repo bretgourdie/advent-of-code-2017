@@ -5,7 +5,7 @@ internal abstract class Duet
 
     protected long HandleInstruction(
         string instruction,
-        IDictionary<string, long> registers,
+        Program program,
         out int jumpAmount)
     {
         jumpAmount = 0;
@@ -17,28 +17,28 @@ internal abstract class Duet
         switch (instructionCode)
         {
             case "snd":
-                snd(split[1], registers);
+                snd(split[1], program);
                 break;
             case "set":
-                set(split[1], split[2], registers);
+                set(split[1], split[2], program);
                 break;
             case "add":
-                add(split[1], split[2], registers);
+                add(split[1], split[2], program);
                 break;
             case "mul":
-                multiply(split[1], split[2], registers);
+                multiply(split[1], split[2], program);
                 break;
             case "mod":
-                modulo(split[1], split[2], registers);
+                modulo(split[1], split[2], program);
                 break;
             case "rcv":
-                if (rcv(split[1], registers))
+                if (rcv(split[1], program))
                 {
                     return GetAnswer();
                 }
                 break;
             case "jgz":
-                jumpAmount =  (int)jumpGreaterThanZero(split[1], split[2], registers);
+                jumpAmount =  (int)jumpGreaterThanZero(split[1], split[2], program);
                 break;
         }
 
@@ -47,72 +47,72 @@ internal abstract class Duet
 
     protected abstract long GetAnswer();
 
-    protected abstract void snd(string argument, IDictionary<string, long> registers);
+    protected abstract void snd(string argument, Program program);
 
     protected void send(
         string argument,
         Queue<long> thisSendQueue,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        thisSendQueue.Enqueue(getValue(argument, registers));
+        thisSendQueue.Enqueue(getValue(argument, program.Registers));
     }
 
     protected long sound(
         string argument,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        return getValue(argument, registers);
+        return getValue(argument, program.Registers);
     }
 
     protected void set(
         string arg1,
         string arg2,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        registers[arg1] = getValue(arg2, registers);
+        program.Registers[arg1] = getValue(arg2, program.Registers);
     }
 
     protected void add(
         string arg1,
         string arg2,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        registers[arg1] = getValue(arg1, registers) + getValue(arg2, registers);
+        program.Registers[arg1] = getValue(arg1, program.Registers) + getValue(arg2, program.Registers);
     }
     
     protected void multiply(
         string arg1,
         string arg2,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        registers[arg1] = getValue(arg1, registers) * getValue(arg2, registers);
+        program.Registers[arg1] = getValue(arg1, program.Registers) * getValue(arg2, program.Registers);
     }
 
     protected void modulo(
         string arg1,
         string arg2,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        registers[arg1] = getValue(arg1, registers) % getValue(arg2, registers);
+        program.Registers[arg1] = getValue(arg1, program.Registers) % getValue(arg2, program.Registers);
     }
 
-    protected abstract bool rcv(string arg1, IDictionary<string, long> registers);
+    protected abstract bool rcv(string arg1, Program program);
 
     protected bool recover(
         string arg1,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        return getValue(arg1, registers) != 0;
+        return getValue(arg1, program.Registers) != 0;
     }
 
     protected bool receive(
         string argument,
-        Queue<long> otherSendQueue,
-        IDictionary<string, long> registers)
+        Program sender,
+        Program receiver)
     {
-        if (otherSendQueue.Any())
+        if (sender.HasAnythingInQueue())
         {
-            registers[argument] = otherSendQueue.Dequeue();
+            receiver.Registers[argument] = sender.ReceiveFromQueue();
             return true;
         }
 
@@ -125,11 +125,11 @@ internal abstract class Duet
     protected long jumpGreaterThanZero(
         string arg1,
         string arg2,
-        IDictionary<string, long> registers)
+        Program program)
     {
-        if (getValue(arg1, registers) > 0)
+        if (getValue(arg1, program.Registers) > 0)
         {
-            return getValue(arg2, registers);
+            return getValue(arg2, program.Registers);
         }
 
         else
