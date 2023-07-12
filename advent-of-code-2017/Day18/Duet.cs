@@ -1,67 +1,70 @@
 ﻿namespace advent_of_code_2017.Day18;
-internal class Duet
+internal abstract class Duet
 {
-    public long Play(IList<string> instructions)
+    public abstract long Play(IList<string> instructions);
+
+    protected long HandleInstruction(
+        string instruction,
+        IDictionary<string, long> registers,
+        out int jumpAmount)
     {
-        IDictionary<string, long> registers = new Dictionary<string, long>();
+        jumpAmount = 0;
 
-        long lastPlayedSound = 0;
+        var split = instruction.Split(' ');
 
-        for (int ii = 0; ii < instructions.Count; ii++)
+        var instructionCode = split[0];
+
+        switch (instructionCode)
         {
-            var instruction = instructions[ii];
-            var split = instruction.Split(' ');
-
-            var instructionCode = split[0];
-
-            switch (instructionCode)
-            {
-                case "snd":
-                    lastPlayedSound = sound(split[1], registers);
-                    break;
-                case "set":
-                    set(split[1], split[2], registers);
-                    break;
-                case "add":
-                    add(split[1], split[2], registers);
-                    break;
-                case "mul":
-                    multiply(split[1], split[2], registers);
-                    break;
-                case "mod":
-                    modulo(split[1], split[2], registers);
-                    break;
-                case "rcv":
-                    if (recover(split[1], registers))
-                    {
-                        return lastPlayedSound;
-                    }
-                    break;
-                case "jgz":
-                    long jumpAmount = jumpGreaterThanZero(split[1], split[2], registers);
-                    if (jumpAmount < 0)
-                    {
-                        ii += (int)jumpAmount - 1;
-                    }
-                    else
-                    {
-                        ii += (int)jumpAmount;
-                    }
-                    break;
-            }
+            case "snd":
+                snd(split[1], registers);
+                break;
+            case "set":
+                set(split[1], split[2], registers);
+                break;
+            case "add":
+                add(split[1], split[2], registers);
+                break;
+            case "mul":
+                multiply(split[1], split[2], registers);
+                break;
+            case "mod":
+                modulo(split[1], split[2], registers);
+                break;
+            case "rcv":
+                if (rcv(split[1], registers))
+                {
+                    return GetAnswer();
+                }
+                break;
+            case "jgz":
+                jumpAmount =  (int)jumpGreaterThanZero(split[1], split[2], registers);
+                break;
         }
 
-        throw new ArgumentException(nameof(instructions));
+        return 0;
     }
 
-    private long sound(
+    protected abstract long GetAnswer();
+
+    protected abstract void snd(string argument, IDictionary<string, long> registers);
+
+    protected void send(
+        string argument,
+        Queue<long> thisSendQueue,
+        IDictionary<string, long> registers)
+    {
+        thisSendQueue.Enqueue(getValue(argument, registers));
+    }
+
+    protected long sound(
         string argument,
         IDictionary<string, long> registers)
     {
         return getValue(argument, registers);
     }
 
-    private void set(
+    protected void set(
         string arg1,
         string arg2,
         IDictionary<string, long> registers)
@@ -69,15 +72,15 @@ internal class Duet
         registers[arg1] = getValue(arg2, registers);
     }
 
-    private void add(
+    protected void add(
         string arg1,
         string arg2,
         IDictionary<string, long> registers)
     {
         registers[arg1] = getValue(arg1, registers) + getValue(arg2, registers);
     }
-
-    private void multiply(
+    
+    protected void multiply(
         string arg1,
         string arg2,
         IDictionary<string, long> registers)
@@ -85,7 +88,7 @@ internal class Duet
         registers[arg1] = getValue(arg1, registers) * getValue(arg2, registers);
     }
 
-    private void modulo(
+    protected void modulo(
         string arg1,
         string arg2,
         IDictionary<string, long> registers)
@@ -93,14 +96,33 @@ internal class Duet
         registers[arg1] = getValue(arg1, registers) % getValue(arg2, registers);
     }
 
-    private bool recover(
+    protected abstract bool rcv(string arg1, IDictionary<string, long> registers);
+
+    protected bool recover(
         string arg1,
         IDictionary<string, long> registers)
     {
         return getValue(arg1, registers) != 0;
     }
 
-    private long jumpGreaterThanZero(
+    protected bool receive(
+        string argument,
+        Queue<long> otherSendQueue,
+        IDictionary<string, long> registers)
+    {
+        if (otherSendQueue.Any())
+        {
+            registers[argument] = otherSendQueue.Dequeue();
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
+    }
+
+    protected long jumpGreaterThanZero(
         string arg1,
         string arg2,
         IDictionary<string, long> registers)

@@ -3,7 +3,7 @@ internal class Day18 : AdventSolution
 {
     protected override long part1Work(string[] input)
     {
-        return new Duet().Play(input);
+        return new SoundAndRecover().Play(input);
     }
 
     protected override long part1ExampleExpected => 4;
