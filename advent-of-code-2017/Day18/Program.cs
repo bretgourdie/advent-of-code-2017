@@ -3,14 +3,13 @@ internal class Program
 {
     public readonly long Id;
     public readonly IDictionary<string, long> Registers;
+    public int InstructionCounter = 0;
     public bool IsReceiving { get; private set; }
     private readonly Queue<long> sendBuffer;
-    private readonly Duet playingStrategy;
 
     public Program()
     {
         Registers = new Dictionary<string, long>();
-        playingStrategy = new SoundAndRecover();
         sendBuffer = new Queue<long>();
     }
 
@@ -20,15 +19,18 @@ internal class Program
         Registers = new Dictionary<string, long>();
         Registers["p"] = id;
         sendBuffer = new Queue<long>();
-        playingStrategy = new SendAndReceive();
     }
+
+    public bool ShouldStillRun(IList<string> instructions) =>
+        InstructionCounter >= 0 && InstructionCounter < instructions.Count
+        && !IsReceiving;
 
     public bool HasAnythingInQueue()
     {
-        return sendBuffer?.Any() ?? false;
+        return sendBuffer.Any();
     }
 
-    public long ReceiveFromQueue()
+    public long ConsumeSendBuffer()
     {
         if (!sendBuffer.Any())
             throw new InvalidOperationException($"{nameof(sendBuffer)} is empty");

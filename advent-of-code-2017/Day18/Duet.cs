@@ -4,15 +4,16 @@ internal abstract class Duet
     public abstract long Play(IList<string> instructions);
 
     protected long HandleInstruction(
-        string instruction,
-        Program program,
-        out int jumpAmount)
+        IList<string> instructions,
+        Program program)
     {
-        jumpAmount = 0;
+        var instruction = instructions[program.InstructionCounter];
 
         var split = instruction.Split(' ');
 
         var instructionCode = split[0];
+
+        int jumpAmount = 0;
 
         switch (instructionCode)
         {
@@ -39,8 +40,15 @@ internal abstract class Duet
                 break;
             case "jgz":
                 jumpAmount =  (int)jumpGreaterThanZero(split[1], split[2], program);
+
+                if (jumpAmount < 0)
+                {
+                    jumpAmount -= 1;
+                }
                 break;
         }
+
+        program.InstructionCounter += 1 + jumpAmount;
 
         return 0;
     }
@@ -112,7 +120,7 @@ internal abstract class Duet
     {
         if (sender.HasAnythingInQueue())
         {
-            receiver.Registers[argument] = sender.ReceiveFromQueue();
+            receiver.Registers[argument] = sender.ConsumeSendBuffer();
             return true;
         }
 
