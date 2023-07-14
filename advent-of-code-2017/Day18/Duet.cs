@@ -40,15 +40,10 @@ internal abstract class Duet
                 break;
             case "jgz":
                 jumpAmount =  (int)jumpGreaterThanZero(split[1], split[2], program);
-
-                if (jumpAmount < 0)
-                {
-                    jumpAmount -= 1;
-                }
                 break;
         }
 
-        program.InstructionCounter += 1 + jumpAmount;
+        program.InstructionCounter += jumpAmount == 0 ? 1 : jumpAmount;
 
         return 0;
     }
