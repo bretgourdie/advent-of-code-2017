@@ -4,7 +4,6 @@ internal class Program
     public readonly long Id;
     public readonly IDictionary<string, long> Registers;
     public int InstructionCounter = 0;
-    public bool IsReceiving { get; private set; }
     private readonly Queue<long> sendBuffer;
 
     public Program()
@@ -21,13 +20,25 @@ internal class Program
         sendBuffer = new Queue<long>();
     }
 
+    public bool IsReceiving(IList<string> instructions) =>
+        instructions[InstructionCounter].StartsWith("rcv");
+
     public bool ShouldStillRun(IList<string> instructions) =>
         InstructionCounter >= 0 && InstructionCounter < instructions.Count
-        && !IsReceiving;
+        &&
+        (
+            (IsReceiving(instructions) && HasAnythingInQueue())
+            || !IsReceiving(instructions)
+        );
 
     public bool HasAnythingInQueue()
     {
         return sendBuffer.Any();
+    }
+
+    public void Receive(long value)
+    {
+        sendBuffer.Enqueue(value);
     }
 
     public long ConsumeSendBuffer()

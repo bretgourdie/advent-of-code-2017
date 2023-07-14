@@ -54,10 +54,10 @@ internal abstract class Duet
 
     protected void send(
         string argument,
-        Queue<long> thisSendQueue,
-        Program program)
+        Program sender,
+        Program receiver)
     {
-        thisSendQueue.Enqueue(getValue(argument, program.Registers));
+        receiver.Receive(getValue(argument, sender.Registers));
     }
 
     protected long sound(
@@ -110,18 +110,17 @@ internal abstract class Duet
 
     protected bool receive(
         string argument,
-        Program sender,
-        Program receiver)
+        Program program)
     {
-        if (sender.HasAnythingInQueue())
+        if (program.HasAnythingInQueue())
         {
-            receiver.Registers[argument] = sender.ConsumeSendBuffer();
-            return true;
+            program.Registers[argument] = program.ConsumeSendBuffer();
+            return false;
         }
 
         else
         {
-            return false;
+            return true;
         }
     }
 

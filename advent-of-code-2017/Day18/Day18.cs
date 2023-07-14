@@ -12,10 +12,10 @@ internal class Day18 : AdventSolution
 
     protected override long part2Work(string[] input)
     {
-        throw new NotImplementedException();
+        return new SendAndReceive().Play(input);
     }
 
-    protected override long part2ExampleExpected => -1;
+    protected override long part2ExampleExpected => 1;
 
     protected override long part2InputExpected => 8001;
 }
