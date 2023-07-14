@@ -54,7 +54,6 @@ internal class Day17 : AdventSolution
     protected override long part2Work(string[] input)
     {
         const long insertions = 50_000_000;
-        const long target = 0;
 
         var zeroPosition = 0;
         var nextNumber = 0;
