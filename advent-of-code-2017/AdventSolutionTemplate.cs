@@ -78,6 +78,7 @@ public abstract class AdventSolutionTemplate<TPart1, TPart2>
         T expected,
         T actual)
     {
+        if (expected == null) throw new ArgumentNullException(nameof(expected));
         Assert.That(expected.Equals(actual), $"Expected {expected}; actual {actual}");
     }
 

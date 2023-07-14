@@ -43,7 +43,9 @@ internal class Program
 
     public long ConsumeSendBuffer()
     {
-        if (!sendBuffer.Any())
+        if (sendBuffer == null) throw new InvalidOperationException();
+
+        if (!HasAnythingInQueue())
             throw new InvalidOperationException($"{nameof(sendBuffer)} is empty");
 
         return sendBuffer.Dequeue();
