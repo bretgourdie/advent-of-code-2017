@@ -1,11 +1,12 @@
 ﻿namespace advent_of_code_2017.Day20;
 internal class Particle
 {
-    private Vector3 position;
+    public Vector3 Position { get; private set; }
     private Vector3 velocity;
     private readonly Vector3 acceleration;
 
     public readonly long Id;
+    public bool Collided { get; private set; }
 
     public Particle(
         int id,
@@ -14,7 +15,7 @@ internal class Particle
         Id = id;
 
         var split = line.Split(", ", StringSplitOptions.RemoveEmptyEntries);
-        position = parseVector(split[0]);
+        Position = parseVector(split[0]);
         velocity = parseVector(split[1]);
         acceleration = parseVector(split[2]);
     }
@@ -35,13 +36,18 @@ internal class Particle
     public void Update()
     {
         velocity += acceleration;
-        position += velocity;
+        Position += velocity;
+    }
+
+    public void MarkCollided()
+    {
+        Collided = true;
     }
 
     public int GetManhattanDistance()
     {
-        return Math.Abs(position.X)
-           + Math.Abs(position.Y)
-           + Math.Abs(position.Z);
+        return Math.Abs(Position.X)
+           + Math.Abs(Position.Y)
+           + Math.Abs(Position.Z);
     }
 }

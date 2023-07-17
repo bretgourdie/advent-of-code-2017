@@ -1,7 +1,9 @@
 ﻿namespace advent_of_code_2017.Day20;
 internal class Day20 : AdventSolution
 {
-    protected override long part1Work(string[] input)
+    protected long work(
+        string[] input,
+        IRemovalStrategy strategy)
     {
         var particles = new List<Particle>();
 
@@ -16,21 +18,23 @@ internal class Day20 : AdventSolution
             {
                 particle.Update();
             }
+
+            strategy.Remove(particles);
         }
 
-        return particles
-            .OrderBy(x => x.GetManhattanDistance())
-            .First()
-            .Id;
+        return strategy.GetAnswer(particles);
+
+
     }
 
-    protected override long part1ExampleExpected => 0;
+    protected override long part1Work(string[] input) =>
+        work(input, new DoNotRemove());
+
+    protected override long part1ExampleExpected => 3;
     protected override long part1InputExpected => 258;
-    protected override long part2Work(string[] input)
-    {
-        throw new NotImplementedException();
-    }
+    protected override long part2Work(string[] input) =>
+        work(input, new RemoveColliding());
 
-    protected override long part2ExampleExpected { get; }
-    protected override long part2InputExpected { get; }
+    protected override long part2ExampleExpected => 1;
+    protected override long part2InputExpected => 707;
 }

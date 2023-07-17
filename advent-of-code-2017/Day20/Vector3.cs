@@ -17,4 +17,17 @@ internal struct Vector3
             a.X + b.X,
             a.Y + b.Y,
             a.Z + b.Z);
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Vector3 v && 
+              X == v.X
+              && Y == v.Y
+              && Z == v.Z;
+    }
+
+    public override int GetHashCode()
+    {
+        return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
+    }
 }
