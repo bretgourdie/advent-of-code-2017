@@ -22,9 +22,10 @@ internal class Packet
         Direction.West
     };
 
-    public string Traverse(IList<string> map)
+    public TraverseResult Traverse(IList<string> map)
     {
         var letters = new StringBuilder();
+        var steps = 0;
 
         Direction currentDirection = Direction.South;
 
@@ -53,9 +54,12 @@ internal class Packet
 
             x = getX(x, currentDirection);
             y = getY(y, currentDirection);
+            steps += 1;
         }
 
-        return letters.ToString();
+        return new TraverseResult(
+            letters.ToString(),
+            steps);
     }
 
     private bool canTraverse(
