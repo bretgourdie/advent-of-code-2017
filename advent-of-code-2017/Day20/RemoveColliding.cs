@@ -5,19 +5,13 @@ internal class RemoveColliding : IRemovalStrategy
     {
         foreach (var particle in particles.Where(x => !x.Collided))
         {
-            var colliding = particles.Where(
-                x => x.Id != particle.Id
-                     && x.Position.Equals(particle.Position)
-                     && !x.Collided);
-
-            if (colliding.Any())
+            foreach (var other in particles.Where(x => !x.Collided && x.Id != particle.Id))
             {
-                foreach (var collided in colliding)
+                if (particle.Position.Equals(other.Position))
                 {
-                    collided.MarkCollided();
+                    particle.MarkCollided();
+                    other.MarkCollided();
                 }
-
-                particle.MarkCollided();
             }
         }
     }
