@@ -1,6 +1,8 @@
 ﻿namespace advent_of_code_2017.Day20;
 internal class Day20 : AdventSolution
 {
+    private const int iterations = 400;
+
     protected long work(
         string[] input,
         IRemovalStrategy strategy)
@@ -12,7 +14,7 @@ internal class Day20 : AdventSolution
             particles.Add(new Particle(ii, input[ii]));
         }
 
-        for (int ii = 0; ii < 500; ii++)
+        for (int ii = 0; ii < iterations; ii++)
         {
             foreach (var particle in particles)
             {
@@ -23,8 +25,6 @@ internal class Day20 : AdventSolution
         }
 
         return strategy.GetAnswer(particles);
-
-
     }
 
     protected override long part1Work(string[] input) =>
