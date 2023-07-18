@@ -16,7 +16,8 @@ internal class Day20 : AdventSolution
 
         for (int ii = 0; ii < iterations; ii++)
         {
-            foreach (var particle in particles)
+            var consideredParticles = particles.Where(x => strategy.ShouldConsider(x));
+            foreach (var particle in consideredParticles)
             {
                 particle.Update();
             }

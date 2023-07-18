@@ -11,4 +11,6 @@ internal class DoNotRemove : IRemovalStrategy
             .First()
             .Id;
     }
+
+    public bool ShouldConsider(Particle particle) => true;
 }
