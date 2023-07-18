@@ -3,22 +3,19 @@ internal class RemoveColliding : IRemovalStrategy
 {
     public IEnumerable<Particle> Remove(IEnumerable<Particle> particles)
     {
-        var toRemove = new HashSet<long>();
+        var toRemove = new Dictionary<Vector3, IList<long>>();
 
         foreach (var particle in particles)
         {
-            foreach (var other in particles.Where(x => x.Id != particle.Id))
+            if (!toRemove.ContainsKey(particle.Position))
             {
-                if (particle.Position.Equals(other.Position))
-                {
-                    toRemove.Add(particle.Id);
-                    toRemove.Add(other.Id);
-                }
+                toRemove[particle.Position] = new List<long>();
             }
+            toRemove[particle.Position].Add(particle.Id);
         }
 
         return particles
-            .Where(x => !toRemove.Contains(x.Id));
+            .Where(x => toRemove[x.Position].Count == 1);
     }
 
     public long GetAnswer(IEnumerable<Particle> particles) => particles.Count();
