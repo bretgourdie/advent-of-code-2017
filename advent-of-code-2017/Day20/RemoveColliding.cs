@@ -1,22 +1,25 @@
 ﻿namespace advent_of_code_2017.Day20;
 internal class RemoveColliding : IRemovalStrategy
 {
-    public void Remove(IEnumerable<Particle> particles)
+    public IEnumerable<Particle> Remove(IEnumerable<Particle> particles)
     {
-        foreach (var particle in particles.Where(x => ShouldConsider(x)))
+        var toRemove = new HashSet<long>();
+
+        foreach (var particle in particles)
         {
-            foreach (var other in particles.Where(x => ShouldConsider(x) && x.Id != particle.Id))
+            foreach (var other in particles.Where(x => x.Id != particle.Id))
             {
                 if (particle.Position.Equals(other.Position))
                 {
-                    particle.MarkCollided();
-                    other.MarkCollided();
+                    toRemove.Add(particle.Id);
+                    toRemove.Add(other.Id);
                 }
             }
         }
+
+        return particles
+            .Where(x => !toRemove.Contains(x.Id));
     }
 
-    public long GetAnswer(IEnumerable<Particle> particles) => particles.Count(x => !x.Collided);
-
-    public bool ShouldConsider(Particle particle) => !particle.Collided;
+    public long GetAnswer(IEnumerable<Particle> particles) => particles.Count();
 }

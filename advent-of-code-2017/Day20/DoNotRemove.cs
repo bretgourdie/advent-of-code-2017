@@ -2,7 +2,7 @@
 
 internal class DoNotRemove : IRemovalStrategy
 {
-    public void Remove(IEnumerable<Particle> particles) { }
+    public IEnumerable<Particle> Remove(IEnumerable<Particle> particles) => particles;
 
     public long GetAnswer(IEnumerable<Particle> particles)
     {
@@ -11,6 +11,4 @@ internal class DoNotRemove : IRemovalStrategy
             .First()
             .Id;
     }
-
-    public bool ShouldConsider(Particle particle) => true;
 }

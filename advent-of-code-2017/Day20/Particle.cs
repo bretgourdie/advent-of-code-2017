@@ -6,7 +6,6 @@ internal class Particle
     private readonly Vector3 acceleration;
 
     public readonly long Id;
-    public bool Collided { get; private set; }
 
     public Particle(
         int id,
@@ -37,11 +36,6 @@ internal class Particle
     {
         velocity += acceleration;
         Position += velocity;
-    }
-
-    public void MarkCollided()
-    {
-        Collided = true;
     }
 
     public int GetManhattanDistance()
