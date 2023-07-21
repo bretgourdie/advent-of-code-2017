@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Formats.Asn1;
 
 namespace advent_of_code_2017.Day21;
 internal class Day21 : AdventSolution
@@ -21,7 +22,9 @@ internal class Day21 : AdventSolution
         var twosRules = rules.Where(x => x.Type == Rule.RuleType.TwosRule).ToList();
         var threesRules = rules.Where(x => x.Type == Rule.RuleType.ThreesRule).ToList();
 
-        for (int ii = 0; ii < 5; ii++)
+        var numberOfIterations = getNumberOfIterations(rules);
+
+        for (int ii = 0; ii < numberOfIterations; ii++)
         {
             var size = shape.GetLength(0);
 
@@ -37,6 +40,16 @@ internal class Day21 : AdventSolution
         }
 
         return pixelCount(shape, pixelTurnedOn);
+    }
+
+    private int getNumberOfIterations(IList<Rule> rules)
+    {
+        if (rules.Count == 2)
+        {
+            return 2;
+        }
+
+        return 5;
     }
 
     private long pixelCount(
@@ -72,37 +85,43 @@ internal class Day21 : AdventSolution
 
     private char[,] transformByTwos(
         char[,] shape,
-        IList<Rule> twosRules) => transform(shape, twosRules, 2);
+        IList<Rule> twosRules) => transform(shape, twosRules, 3, 2);
 
     private char[,] transformByThrees(
         char[,] shape,
-        IList<Rule> threesRules) => transform(shape, threesRules, 3);
+        IList<Rule> threesRules) => transform(shape, threesRules, 2, 3);
 
     private char[,] transform(
         char[,] shape,
         IList<Rule> rules,
-        int subdivisionLength)
+        int newSubdivisionLength,
+        int oldSubdivisionLength)
     {
         var yLen = shape.GetLength(0);
         var xLen = shape.GetLength(1);
 
-        char[,] newShape = new char[yLen + 1, xLen + 1];
+        var yExpanding = yLen / oldSubdivisionLength;
+        var xExpanding = xLen / oldSubdivisionLength;
 
-        for (int y = 0; y < shape.GetLength(0) / subdivisionLength; y += subdivisionLength)
+        char[,] newShape = new char[yLen + yExpanding, xLen + xExpanding];
+
+        for (int y = 0; y < yExpanding; y++)
         {
-            for (int x = 0; x < shape.GetLength(1) / subdivisionLength; x += subdivisionLength)
+            for (int x = 0; x < xExpanding; x++)
             {
-                char[,] slice = getSlice(shape, x, y, subdivisionLength);
-                foreach (var rule in rules)
-                {
-                    if (rule.Qualifies(slice))
-                    {
-                        slice = rule.Output;
-                    }
-                }
+                var slice = getSlice(
+                    shape,
+                    x * oldSubdivisionLength,
+                    y * oldSubdivisionLength,
+                    oldSubdivisionLength);
 
-                throw new NotImplementedException("have to adjust for x/y offset in new shape");
-                addSlice(slice, newShape, x, y);
+                var rule = rules.Single(x => x.Qualifies(slice));
+
+                addSlice(
+                    rule.Output,
+                    newShape,
+                    x * newSubdivisionLength,
+                    y * newSubdivisionLength);
             }
         }
 
@@ -115,7 +134,16 @@ internal class Day21 : AdventSolution
         int x,
         int y)
     {
-        throw new NotImplementedException();
+        var yLen = slice.GetLength(0);
+        var xLen = slice.GetLength(1);
+
+        for (int ii = 0; ii < yLen; ii++)
+        {
+            for (int jj = 0; jj < xLen; jj++)
+            {
+                target[ii + y, jj + x] = slice[ii, jj];
+            }
+        }
     }
 
     private char[,] getSlice(
@@ -126,11 +154,11 @@ internal class Day21 : AdventSolution
     {
         var slice = new char[length, length];
 
-        for (int ii = y; ii < y + length; ii++)
+        for (int ii = 0; ii < length; ii++)
         {
-            for (int jj = x; jj < x + length; jj++)
+            for (int jj = 0; jj < length; jj++)
             {
-                slice[ii - y, jj - x] = shape[y, x];
+                slice[ii, jj] = shape[y + ii, x + jj];
             }
         }
 

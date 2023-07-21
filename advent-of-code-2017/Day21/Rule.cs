@@ -39,9 +39,9 @@ internal class Rule
     {
         var grid = new char[input.Count, input[0].Length];
 
-        for (int y = 0; y < grid.Length; y++)
+        for (int y = 0; y < grid.GetLength(0); y++)
         {
-            for (int x = 0; x < input.Count; x++)
+            for (int x = 0; x < grid.GetLength(1); x++)
             {
                 grid[y, x] = input[y][x];
             }
@@ -74,40 +74,57 @@ internal class Rule
         Rotation rotation,
         Reflection reflection)
     {
-        var yLen = initial.GetLength(0);
-        var xLen = initial.GetLength(1);
+        if (initial == null) throw new ArgumentNullException(nameof(initial));
 
         var numberOfRotations = Array.IndexOf(rotations, rotation);
+        var result = initial.Clone() as char[,];
 
-        char[,] result = initial;
-        char[,] toBeTransformed = initial;
-
-        for (int currentRotation = 0; currentRotation < numberOfRotations; currentRotation++)
+        for (int ii = 0; ii < numberOfRotations; ii++)
         {
-            result = new char[yLen, xLen];
-
-            for (int y = 0; y < yLen; y++)
-            {
-                for (int x = 0; x < xLen; x++)
-                {
-                    result[x, y] = toBeTransformed[y, x];
-                }
-            }
-
-            for (int y = 0; y < yLen; y++)
-            {
-                for (int x = 0; x < xLen; x++)
-                {
-                    result[y, x] = toBeTransformed[yLen - y - 1, xLen - x - 1];
-                }
-            }
-
-            toBeTransformed = result;
+            result = rotateClockwise(result);
         }
 
         if (reflection == Reflection.Horizontal)
         {
+            result = reflectHorizontal(result);
+        }
 
+        return result;
+    }
+
+    private char[,] reflectHorizontal(char[,] initial)
+    {
+        var yLen = initial.GetLength(0);
+        var xLen = initial.GetLength(1);
+        var result = new char[yLen,xLen];
+
+        for (int y = 0; y < yLen; y++)
+        {
+            for (int x = 0; x < xLen; x++)
+            {
+                var xFlipped = xLen - x - 1;
+                result[y, x] = initial[y, xFlipped];
+            }
+        }
+
+        return result;
+    }
+
+    private char[,] rotateClockwise(char[,] initial)
+    {
+        var yLen = initial.GetLength(0);
+        var xLen = initial.GetLength(1);
+        var result = new char[yLen, xLen];
+
+        for (int row = 0; row < xLen; row++)
+        {
+            for (int col = 0; col < yLen; col++)
+            {
+                int newRow = col;
+                int newCol = yLen - (row + 1);
+
+                result[newCol, newRow] = initial[col, row];
+            }
         }
 
         return result;
