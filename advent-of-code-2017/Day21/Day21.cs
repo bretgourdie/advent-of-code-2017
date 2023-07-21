@@ -1,7 +1,4 @@
-﻿using System.Data;
-using System.Formats.Asn1;
-
-namespace advent_of_code_2017.Day21;
+﻿namespace advent_of_code_2017.Day21;
 internal class Day21 : AdventSolution
 {
     private const char pixelTurnedOn = '#';
@@ -89,7 +86,7 @@ internal class Day21 : AdventSolution
 
     private char[,] transformByThrees(
         char[,] shape,
-        IList<Rule> threesRules) => transform(shape, threesRules, 2, 3);
+        IList<Rule> threesRules) => transform(shape, threesRules, 4, 3);
 
     private char[,] transform(
         char[,] shape,
@@ -166,7 +163,7 @@ internal class Day21 : AdventSolution
     }
 
     protected override long part1ExampleExpected => 12;
-    protected override long part1InputExpected => -1;
+    protected override long part1InputExpected => 144;
     protected override long part2Work(string[] input)
     {
         throw new NotImplementedException();
