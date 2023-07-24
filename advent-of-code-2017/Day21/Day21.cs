@@ -10,7 +10,12 @@ internal class Day21 : AdventSolution
         {'#', '#', '#'}
     };
 
-    protected override long part1Work(string[] input)
+    protected override long part1Work(string[] input) =>
+        work(input, getNumberOfIterations(input, 5));
+
+    private long work(
+        string[] input,
+        int numberOfIterations)
     {
         var shape = startingShape;
 
@@ -18,8 +23,6 @@ internal class Day21 : AdventSolution
 
         var twosRules = rules.Where(x => x.Type == Rule.RuleType.TwosRule).ToList();
         var threesRules = rules.Where(x => x.Type == Rule.RuleType.ThreesRule).ToList();
-
-        var numberOfIterations = getNumberOfIterations(rules);
 
         for (int ii = 0; ii < numberOfIterations; ii++)
         {
@@ -39,14 +42,14 @@ internal class Day21 : AdventSolution
         return pixelCount(shape, pixelTurnedOn);
     }
 
-    private int getNumberOfIterations(IList<Rule> rules)
+    private int getNumberOfIterations(IList<string> input, int inputNumber)
     {
-        if (rules.Count == 2)
+        if (input.Count == 2)
         {
             return 2;
         }
 
-        return 5;
+        return inputNumber;
     }
 
     private long pixelCount(
@@ -164,11 +167,10 @@ internal class Day21 : AdventSolution
 
     protected override long part1ExampleExpected => 12;
     protected override long part1InputExpected => 144;
-    protected override long part2Work(string[] input)
-    {
-        throw new NotImplementedException();
-    }
 
-    protected override long part2ExampleExpected { get; }
-    protected override long part2InputExpected { get; }
+    protected override long part2Work(string[] input) =>
+        work(input, getNumberOfIterations(input, 18));
+
+    protected override long part2ExampleExpected => 12;
+    protected override long part2InputExpected => 2169301;
 }
