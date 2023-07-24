@@ -74,10 +74,10 @@ internal class Rule
         Rotation rotation,
         Reflection reflection)
     {
-        if (initial == null) throw new ArgumentNullException(nameof(initial));
-
         var numberOfRotations = Array.IndexOf(rotations, rotation);
-        var result = initial.Clone() as char[,];
+        var result =
+            initial.Clone() as char[,] ??
+            throw new NullReferenceException(nameof(initial));
 
         for (int ii = 0; ii < numberOfRotations; ii++)
         {
