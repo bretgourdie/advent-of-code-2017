@@ -1,22 +1,12 @@
 ﻿namespace advent_of_code_2017.Day24;
 internal class Day24 : AdventSolution
 {
-    protected override long part1Work(string[] input)
-    {
-        var components = new List<Component>();
-
-        foreach (var line in input)
-        {
-            components.Add(new Component(line));
-        }
-
-        return buildMaximumStrengthBridge(components);
-    }
-
-    private long buildMaximumStrengthBridge(
-        IList<Component> components)
+    private long work(
+        string[] input,
+        Func<IDictionary<string, long>,long> resultFunction)
     {
         var bridgesToStrength = new Dictionary<string, long>();
+        var components = parseComponents(input) ?? throw new ArgumentException(nameof(input));
 
         var starters = components.Where(x => x.Ports.Contains(0));
 
@@ -29,7 +19,7 @@ internal class Day24 : AdventSolution
                 bridgesToStrength);
         }
 
-        return bridgesToStrength.Values.Max();
+        return resultFunction(bridgesToStrength);
     }
 
     private void buildAllBridges(
@@ -37,6 +27,8 @@ internal class Day24 : AdventSolution
         IList<Component> availableComponents,
         IDictionary<string, long> builtBridges)
     {
+        if (availableComponents == null) throw new ArgumentNullException(nameof(availableComponents));
+
         var startingBridgeString = startingBridge.ToString();
         if (builtBridges.ContainsKey(startingBridgeString))
         {
@@ -56,13 +48,44 @@ internal class Day24 : AdventSolution
         }
     }
 
-    protected override long part1ExampleExpected => 31;
-    protected override long part1InputExpected => 1859;
-    protected override long part2Work(string[] input)
+    private IList<Component> parseComponents(IList<string> input)
     {
-        throw new NotImplementedException();
+        var components = new List<Component>();
+
+        foreach (var line in input)
+        {
+            components.Add(new Component(line));
+        }
+
+        return components;
     }
 
-    protected override long part2ExampleExpected { get; }
-    protected override long part2InputExpected { get; }
+    private long strongestBridge(IDictionary<string, long> bridgesToStrength)
+    {
+        return bridgesToStrength.Values.Max();
+    }
+
+    private long longestStrongestBridge(IDictionary<string, long> bridgesToStrength)
+    {
+        var longestBridgeLinks =
+            bridgesToStrength.Keys
+                .Select(x => x.Count(letter => letter == '-'))
+                .Max();
+
+        var longestBridges = bridgesToStrength.Where(x => x.Key.Count(letter => letter == '-') == longestBridgeLinks);
+
+        return longestBridges.Max(x => x.Value);
+    }
+
+    protected override long part1Work(string[] input) =>
+        work(input, strongestBridge);
+
+    protected override long part1ExampleExpected => 31;
+    protected override long part1InputExpected => 1859;
+
+    protected override long part2Work(string[] input) =>
+        work(input, longestStrongestBridge);
+
+    protected override long part2ExampleExpected => 19;
+    protected override long part2InputExpected => 1799;
 }
