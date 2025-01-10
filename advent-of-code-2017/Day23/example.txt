@@ -1,8 +1,0 @@
-set a 2
-mul a a
-set a 0
-jnz a 50
-set b 10
-mul b 2
-set a 1
-jnz a 50
